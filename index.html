@@ -179,6 +179,64 @@
     background: var(--verde);
   }
 
+  .file-link{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1.5px solid var(--accent, var(--terracota));
+    background: transparent;
+    color: var(--accent, var(--terracota));
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.9rem;
+  }
+
+  .flyer-img{
+    display: block;
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 0.9rem;
+    border: 1px solid var(--gris);
+  }
+
+  .transfer-box{
+    background: var(--crema);
+    border: 1.5px solid var(--accent, var(--terracota));
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.9rem;
+    text-align: center;
+  }
+
+  .transfer-box .label{
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    margin: 0 0 0.15rem;
+  }
+
+  .transfer-box .value{
+    font-family: 'Belleza', 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--accent, var(--terracota));
+    margin: 0 0 0.75rem;
+  }
+
+  .transfer-box .value:last-child{
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 480px){
+    .file-link{ width: auto; }
+  }
+
   footer{
     text-align: center;
     margin-top: 2.5rem;
@@ -228,6 +286,7 @@ Ahí abajo te dejo:
 
 Cualquier duda que tengas, estoy por acá. Y todos los jueves a las 19hs tenemos clase en Manuel Aguirre 706, presencial o virtual, por si querés sumarte a practicar en vivo 🙏</p>
     </div>
+    <a class="file-link" href="assets/Programa-Florecer.pdf" download>📄 Descargar PDF del programa</a>
     <button class="copy-btn" data-target="msg-1">📋 Copiar mensaje</button>
   </section>
 
@@ -288,7 +347,16 @@ Cualquier duda que tengas, estoy por acá. Y todos los jueves a las 19hs tenemos
     <div class="message-box">
       <p class="message-text" id="msg-5">¡Qué alegría que te sumes! 💫 Te dejo la foto del flyer con los datos para hacer la transferencia de la seña y así confirmamos tu lugar en Florecer.</p>
     </div>
+    <img class="flyer-img" src="assets/flyer-sena.jpg" alt="Flyer con los datos de la seña: transferencia $50.000, alias yogaconiki">
+    <div class="transfer-box">
+      <p class="label">Transferencia</p>
+      <p class="value">$50.000</p>
+      <p class="label">Alias</p>
+      <p class="value" id="alias-value">yogaconiki</p>
+    </div>
+    <a class="file-link" href="assets/flyer-sena.jpg" download>🖼️ Descargar foto del flyer</a>
     <button class="copy-btn" data-target="msg-5">📋 Copiar mensaje</button>
+    <button class="copy-btn" data-target="alias-value" style="margin-top: 0.6rem;">📋 Copiar alias</button>
   </section>
 
 </main>
