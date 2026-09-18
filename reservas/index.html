@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reservar clase — Nicole Guillemette Yoga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Belleza&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crema:#F8E7BA;
+    --verde:#306956;
+    --terracota:#DC843E;
+    --sage:#8FB19F;
+    --gris:#D3D3D3;
+    --rojo:#C0503E;
+  }
+  *{ box-sizing: border-box; }
+  html, body{ margin:0; padding:0; background: var(--crema); color: var(--verde); font-family: 'Poppins', sans-serif; }
+  body{ padding: 1.5rem 1.1rem 4rem; max-width: 640px; margin: 0 auto; }
+  h1, h2, .title-font{ font-family: 'Belleza', serif; letter-spacing: 0.02em; font-weight: 400; }
+  header{ text-align: center; padding: 1rem 0.5rem 1.5rem; }
+  header h1{ font-size: 1.8rem; margin: 0 0 0.3rem; }
+  header p{ margin: 0; font-size: 0.9rem; opacity: 0.75; font-weight: 300; }
+  .divider{ width: 60px; height: 2px; background: var(--terracota); margin: 1rem auto 0; border-radius: 2px; opacity: 0.7; }
+  .card{ background: #fffdf6; border-radius: 18px; padding: 1.3rem; box-shadow: 0 3px 14px rgba(48,105,86,0.08); border: 1px solid var(--gris); margin-bottom: 1.1rem; }
+  label{ display:block; font-size: 0.8rem; margin: 0.7rem 0 0.25rem; font-weight: 500; }
+  input, select{ width: 100%; padding: 0.65rem 0.8rem; border-radius: 10px; border: 1.5px solid var(--gris); font-family: 'Poppins', sans-serif; font-size: 0.92rem; background: #fff; color: var(--verde); }
+  input:focus, select:focus{ outline: none; border-color: var(--terracota); }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; border:none; background: var(--terracota); color:#fffdf6; font-family:'Poppins',sans-serif; font-size:0.92rem; font-weight:500; padding:0.7rem 1.2rem; border-radius:999px; cursor:pointer; width:100%; margin-top:1rem; }
+  .btn:active{ transform: scale(0.98); }
+  .btn:disabled{ opacity: 0.55; cursor: default; }
+  .btn.secondary{ background: transparent; border: 1.5px solid var(--terracota); color: var(--terracota); }
+  .btn.small{ width:auto; padding:0.45rem 0.9rem; font-size:0.82rem; margin-top:0; }
+  .link{ text-align:center; margin-top:0.9rem; font-size:0.85rem; }
+  .link a{ color: var(--terracota); font-weight:500; cursor:pointer; text-decoration: underline; }
+  .msg{ font-size:0.85rem; margin-top:0.7rem; text-align:center; }
+  .msg.error{ color: var(--rojo); }
+  .msg.ok{ color: var(--verde); }
+  .hidden{ display:none !important; }
+  .tabs{ display:flex; gap:0.5rem; margin-bottom:1rem; }
+  .tab{ flex:1; text-align:center; padding:0.6rem; border-radius:12px; background:#fffdf6; border:1px solid var(--gris); font-size:0.85rem; font-weight:500; cursor:pointer; }
+  .tab.active{ background: var(--verde); color:#fffdf6; border-color:var(--verde); }
+  .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+  .topbar .name{ font-size:0.95rem; font-weight:500; }
+  .pack-badge{ display:inline-block; background: var(--sage); color:#fffdf6; font-size:0.75rem; padding:0.25rem 0.7rem; border-radius:999px; margin-top:0.3rem; }
+  .pack-badge.empty{ background: var(--rojo); }
+  .day-group{ margin-bottom:0.9rem; }
+  .day-title{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; opacity:0.65; margin: 0 0 0.4rem; }
+  .session-row{ display:flex; justify-content:space-between; align-items:center; padding:0.7rem 0.9rem; border-radius:12px; border:1px solid var(--gris); background:#fffdf6; margin-bottom:0.5rem; }
+  .session-row .info b{ display:block; font-size:0.95rem; }
+  .session-row .info span{ font-size:0.78rem; opacity:0.7; }
+  .spots{ font-size:0.72rem; padding:0.15rem 0.5rem; border-radius:999px; background:var(--sage); color:#fffdf6; margin-left:0.4rem; }
+  .spots.full{ background: var(--rojo); }
+  footer{ text-align:center; margin-top:2rem; font-size:0.78rem; opacity:0.6; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧘‍♀️ Reservá tu clase</h1>
+  <p>Hatha Yoga Terapéutico · Nicole Guillemette</p>
+  <div class="divider"></div>
+</header>
+
+<main>
+
+  <!-- ================= AUTH ================= -->
+  <div id="auth-view">
+    <div id="login-card" class="card">
+      <h2 style="margin-top:0; font-size:1.15rem;">Iniciar sesión</h2>
+      <form id="login-form">
+        <label>Email</label>
+        <input type="email" id="li-email" required>
+        <label>Contraseña</label>
+        <input type="password" id="li-password" required>
+        <button class="btn" type="submit">Entrar</button>
+      </form>
+      <p class="msg" id="login-msg"></p>
+      <p class="link">¿No tenés cuenta? <a id="go-signup">Registrate acá</a></p>
+    </div>
+
+    <div id="signup-card" class="card hidden">
+      <h2 style="margin-top:0; font-size:1.15rem;">Crear cuenta</h2>
+      <form id="signup-form">
+        <label>Nombre y apellido</label>
+        <input type="text" id="su-name" required>
+        <label>WhatsApp</label>
+        <input type="tel" id="su-phone" placeholder="+54 9 11 ..." required>
+        <label>Email</label>
+        <input type="email" id="su-email" required>
+        <label>Contraseña</label>
+        <input type="password" id="su-password" minlength="6" required>
+        <button class="btn" type="submit">Crear cuenta</button>
+      </form>
+      <p class="msg" id="signup-msg"></p>
+      <p class="link">¿Ya tenés cuenta? <a id="go-login">Iniciar sesión</a></p>
+    </div>
+  </div>
+
+  <!-- ================= APP ================= -->
+  <div id="app-view" class="hidden">
+    <div class="topbar">
+      <div>
+        <div class="name" id="welcome-name"></div>
+        <div id="pack-badge" class="pack-badge">Cargando pack...</div>
+      </div>
+      <button class="btn secondary small" id="logout-btn">Salir</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="horarios">Horarios</div>
+      <div class="tab" data-tab="mis-clases">Mis clases</div>
+    </div>
+
+    <div id="tab-horarios">
+      <div id="schedule-list"></div>
+    </div>
+
+    <div id="tab-mis-clases" class="hidden">
+      <div id="my-bookings-list"></div>
+    </div>
+
+    <p class="msg" id="app-msg"></p>
+  </div>
+
+</main>
+
+<footer>hecho con 🌿 para Niki</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../assets/supabase-config.js"></script>
+<script>
+  const client = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  let currentUser = null;
+
+  const DAY_NAMES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+  function show(el){ el.classList.remove('hidden'); }
+  function hide(el){ el.classList.add('hidden'); }
+
+  // ---------- Auth view toggling ----------
+  document.getElementById('go-signup').addEventListener('click', () => {
+    hide(document.getElementById('login-card'));
+    show(document.getElementById('signup-card'));
+  });
+  document.getElementById('go-login').addEventListener('click', () => {
+    hide(document.getElementById('signup-card'));
+    show(document.getElementById('login-card'));
+  });
+
+  // ---------- Signup ----------
+  document.getElementById('signup-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const full_name = document.getElementById('su-name').value.trim();
+    const phone = document.getElementById('su-phone').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const password = document.getElementById('su-password').value;
+    const msg = document.getElementById('signup-msg');
+    msg.textContent = '';
+    const { error } = await client.auth.signUp({
+      email, password,
+      options: { data: { full_name, phone } }
+    });
+    if (error) {
+      msg.textContent = error.message;
+      msg.className = 'msg error';
+      return;
+    }
+    msg.textContent = '¡Cuenta creada! Iniciando sesión...';
+    msg.className = 'msg ok';
+    const { error: loginError } = await client.auth.signInWithPassword({ email, password });
+    if (loginError) {
+      msg.textContent = 'Cuenta creada. Iniciá sesión con tu email y contraseña.';
+    }
+  });
+
+  // ---------- Login ----------
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('li-email').value.trim();
+    const password = document.getElementById('li-password').value;
+    const msg = document.getElementById('login-msg');
+    msg.textContent = '';
+    const { error } = await client.auth.signInWithPassword({ email, password });
+    if (error) {
+      msg.textContent = 'Email o contraseña incorrectos.';
+      msg.className = 'msg error';
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await client.auth.signOut();
+  });
+
+  // ---------- Tabs ----------
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      hide(document.getElementById('tab-horarios'));
+      hide(document.getElementById('tab-mis-clases'));
+      if (tab.dataset.tab === 'horarios') {
+        show(document.getElementById('tab-horarios'));
+        loadSchedule();
+      } else {
+        show(document.getElementById('tab-mis-clases'));
+        loadMyBookings();
+      }
+    });
+  });
+
+  // ---------- App state ----------
+  async function onLogin(user) {
+    currentUser = user;
+    hide(document.getElementById('auth-view'));
+    show(document.getElementById('app-view'));
+
+    const { data: profile } = await client.from('profiles').select('*').eq('id', user.id).single();
+    document.getElementById('welcome-name').textContent = 'Hola, ' + (profile?.full_name || user.email) + ' 👋';
+
+    loadPack();
+    loadSchedule();
+  }
+
+  function onLogout() {
+    currentUser = null;
+    hide(document.getElementById('app-view'));
+    show(document.getElementById('auth-view'));
+    document.getElementById('login-form').reset();
+  }
+
+  async function loadPack() {
+    const badge = document.getElementById('pack-badge');
+    const today = new Date().toISOString().slice(0,10);
+    const { data } = await client.from('packs')
+      .select('*')
+      .eq('student_id', currentUser.id)
+      .gte('valid_until', today)
+      .order('purchased_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!data) {
+      badge.textContent = 'Sin pack activo — hablá con Nicole';
+      badge.className = 'pack-badge empty';
+      return;
+    }
+    if (data.plan_type === 'libre') {
+      badge.textContent = 'Plan libre · vence ' + data.valid_until;
+    } else {
+      badge.textContent = data.credits_remaining + ' clases disponibles · vence ' + data.valid_until;
+    }
+    badge.className = 'pack-badge' + (data.plan_type !== 'libre' && data.credits_remaining <= 0 ? ' empty' : '');
+  }
+
+  async function loadSchedule() {
+    const list = document.getElementById('schedule-list');
+    list.innerHTML = 'Cargando horarios...';
+    const { data, error } = await client.rpc('get_upcoming_sessions', { p_days: 14 });
+    if (error) { list.innerHTML = '<p class="msg error">No se pudo cargar la grilla.</p>'; return; }
+    if (!data || data.length === 0) { list.innerHTML = '<p class="msg">No hay clases programadas todavía.</p>'; return; }
+
+    const byDate = {};
+    data.forEach(s => { (byDate[s.session_date] = byDate[s.session_date] || []).push(s); });
+
+    list.innerHTML = '';
+    Object.keys(byDate).sort().forEach(date => {
+      const d = new Date(date + 'T00:00:00');
+      const group = document.createElement('div');
+      group.className = 'day-group';
+      const title = document.createElement('div');
+      title.className = 'day-title';
+      title.textContent = DAY_NAMES[d.getDay()] + ' ' + d.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
+      group.appendChild(title);
+
+      byDate[date].forEach(s => {
+        const spotsLeft = s.capacity - Number(s.booked_count);
+        const row = document.createElement('div');
+        row.className = 'session-row';
+        row.innerHTML = `
+          <div class="info">
+            <b>${s.start_time.slice(0,5)} · ${s.class_name}</b>
+            <span>${s.teacher_name || 'Profesora a confirmar'}</span>
+            <span class="spots ${spotsLeft <= 0 ? 'full' : ''}">${spotsLeft <= 0 ? 'Completo' : spotsLeft + ' lugares'}</span>
+          </div>
+        `;
+        const btn = document.createElement('button');
+        btn.className = 'btn small';
+        btn.textContent = 'Reservar';
+        btn.disabled = spotsLeft <= 0;
+        btn.addEventListener('click', () => bookSession(s.session_id, btn));
+        row.appendChild(btn);
+        group.appendChild(row);
+      });
+      list.appendChild(group);
+    });
+  }
+
+  async function bookSession(sessionId, btn) {
+    const msg = document.getElementById('app-msg');
+    msg.textContent = '';
+    btn.disabled = true;
+    const { error } = await client.rpc('book_session', { p_session_id: sessionId });
+    if (error) {
+      msg.textContent = error.message;
+      msg.className = 'msg error';
+      btn.disabled = false;
+      return;
+    }
+    msg.textContent = '¡Reserva confirmada!';
+    msg.className = 'msg ok';
+    loadSchedule();
+    loadPack();
+  }
+
+  async function loadMyBookings() {
+    const list = document.getElementById('my-bookings-list');
+    list.innerHTML = 'Cargando...';
+    const { data, error } = await client.from('bookings')
+      .select('id, status, sessions(session_date, classes(name, start_time, teacher_name))')
+      .eq('student_id', currentUser.id)
+      .eq('status', 'reservado')
+      .order('id', { ascending: false });
+
+    if (error) { list.innerHTML = '<p class="msg error">No se pudo cargar tus reservas.</p>'; return; }
+    if (!data || data.length === 0) { list.innerHTML = '<p class="msg">Todavía no reservaste ninguna clase.</p>'; return; }
+
+    list.innerHTML = '';
+    data
+      .sort((a,b) => (a.sessions?.session_date || '').localeCompare(b.sessions?.session_date || ''))
+      .forEach(b => {
+        const s = b.sessions;
+        const c = s?.classes;
+        const d = s ? new Date(s.session_date + 'T00:00:00') : null;
+        const row = document.createElement('div');
+        row.className = 'session-row';
+        row.innerHTML = `
+          <div class="info">
+            <b>${d ? DAY_NAMES[d.getDay()] + ' ' + d.toLocaleDateString('es-AR', { day:'numeric', month:'short' }) : ''}</b>
+            <span>${c?.start_time?.slice(0,5) || ''} · ${c?.name || ''} · ${c?.teacher_name || ''}</span>
+          </div>
+        `;
+        const btn = document.createElement('button');
+        btn.className = 'btn secondary small';
+        btn.textContent = 'Cancelar';
+        btn.addEventListener('click', () => cancelBooking(b.id));
+        row.appendChild(btn);
+        list.appendChild(row);
+      });
+  }
+
+  async function cancelBooking(bookingId) {
+    const msg = document.getElementById('app-msg');
+    const { error } = await client.rpc('cancel_booking', { p_booking_id: bookingId });
+    if (error) {
+      msg.textContent = error.message;
+      msg.className = 'msg error';
+      return;
+    }
+    msg.textContent = 'Reserva cancelada.';
+    msg.className = 'msg ok';
+    loadMyBookings();
+    loadPack();
+  }
+
+  // ---------- Boot ----------
+  (async function init() {
+    const { data: { session } } = await client.auth.getSession();
+    if (session) onLogin(session.user);
+
+    client.auth.onAuthStateChange((event, session) => {
+      if (session) onLogin(session.user);
+      else onLogout();
+    });
+  })();
+</script>
+
+</body>
+</html>

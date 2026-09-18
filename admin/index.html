@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de administración — Nicole Guillemette Yoga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Belleza&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --crema:#F8E7BA; --verde:#306956; --terracota:#DC843E; --sage:#8FB19F; --gris:#D3D3D3; --rojo:#C0503E; }
+  *{ box-sizing: border-box; }
+  html, body{ margin:0; padding:0; background: var(--crema); color: var(--verde); font-family:'Poppins',sans-serif; }
+  body{ padding: 1.5rem 1.1rem 4rem; max-width: 760px; margin: 0 auto; }
+  h1,h2,.title-font{ font-family:'Belleza',serif; font-weight:400; letter-spacing:0.02em; }
+  header{ text-align:center; padding: 1rem 0.5rem 1.5rem; }
+  header h1{ font-size:1.7rem; margin:0 0 0.3rem; }
+  header p{ margin:0; font-size:0.88rem; opacity:0.75; }
+  .divider{ width:60px; height:2px; background:var(--terracota); margin:1rem auto 0; border-radius:2px; opacity:0.7; }
+  .card{ background:#fffdf6; border-radius:18px; padding:1.3rem; box-shadow:0 3px 14px rgba(48,105,86,0.08); border:1px solid var(--gris); margin-bottom:1.1rem; }
+  label{ display:block; font-size:0.78rem; margin:0.6rem 0 0.2rem; font-weight:500; }
+  input, select{ width:100%; padding:0.6rem 0.75rem; border-radius:10px; border:1.5px solid var(--gris); font-family:'Poppins',sans-serif; font-size:0.88rem; background:#fff; color:var(--verde); }
+  input:focus, select:focus{ outline:none; border-color:var(--terracota); }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; border:none; background:var(--terracota); color:#fffdf6; font-family:'Poppins',sans-serif; font-size:0.88rem; font-weight:500; padding:0.6rem 1.1rem; border-radius:999px; cursor:pointer; margin-top:0.9rem; }
+  .btn.secondary{ background:transparent; border:1.5px solid var(--terracota); color:var(--terracota); }
+  .btn.small{ padding:0.4rem 0.85rem; font-size:0.78rem; margin-top:0; }
+  .btn.ok{ background: var(--verde); }
+  .btn.danger{ background: var(--rojo); }
+  .btn:disabled{ opacity:0.5; }
+  .msg{ font-size:0.85rem; margin-top:0.7rem; }
+  .msg.error{ color:var(--rojo); }
+  .msg.ok{ color:var(--verde); }
+  .hidden{ display:none !important; }
+  .tabs{ display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .tab{ flex:1; min-width:110px; text-align:center; padding:0.55rem; border-radius:12px; background:#fffdf6; border:1px solid var(--gris); font-size:0.8rem; font-weight:500; cursor:pointer; }
+  .tab.active{ background:var(--verde); color:#fffdf6; border-color:var(--verde); }
+  .item-row{ display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.8rem; border-radius:12px; border:1px solid var(--gris); background:#fff; margin-bottom:0.45rem; gap:0.6rem; flex-wrap:wrap; }
+  .item-row .info b{ display:block; font-size:0.9rem; }
+  .item-row .info span{ font-size:0.75rem; opacity:0.7; }
+  .actions{ display:flex; gap:0.4rem; }
+  .badge{ font-size:0.7rem; padding:0.15rem 0.5rem; border-radius:999px; background:var(--sage); color:#fffdf6; }
+  .badge.off{ background:var(--gris); color:var(--verde); }
+  .topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+  #login-view .card{ max-width: 380px; margin: 2rem auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🗂️ Panel de administración</h1>
+  <p>Nicole Guillemette · Espacio de Yoga</p>
+  <div class="divider"></div>
+</header>
+
+<main>
+
+  <div id="login-view">
+    <div class="card">
+      <h2 style="margin-top:0; font-size:1.1rem;">Iniciar sesión</h2>
+      <form id="login-form">
+        <label>Email</label>
+        <input type="email" id="li-email" required>
+        <label>Contraseña</label>
+        <input type="password" id="li-password" required>
+        <button class="btn" type="submit" style="width:100%;">Entrar</button>
+      </form>
+      <p class="msg" id="login-msg"></p>
+    </div>
+  </div>
+
+  <div id="no-access-view" class="hidden">
+    <div class="card">
+      <p>Esta cuenta no tiene permisos de administración.</p>
+      <button class="btn secondary" id="logout-noaccess">Salir</button>
+    </div>
+  </div>
+
+  <div id="admin-view" class="hidden">
+    <div class="topbar">
+      <div id="admin-name" style="font-weight:500;"></div>
+      <button class="btn secondary small" id="logout-btn">Salir</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="clases">Clases</div>
+      <div class="tab" data-tab="reservas">Reservas del día</div>
+      <div class="tab" data-tab="alumnas">Alumnas y packs</div>
+    </div>
+
+    <!-- CLASES -->
+    <div id="tab-clases">
+      <div class="card">
+        <h2 style="margin-top:0; font-size:1.05rem;">Nueva clase (horario semanal fijo)</h2>
+        <form id="class-form">
+          <label>Nombre de la clase</label>
+          <input type="text" id="c-name" value="Hatha Yoga Terapéutico" required>
+          <div class="row2">
+            <div>
+              <label>Día</label>
+              <select id="c-day" required>
+                <option value="1">Lunes</option>
+                <option value="2">Martes</option>
+                <option value="3">Miércoles</option>
+                <option value="4">Jueves</option>
+                <option value="5">Viernes</option>
+                <option value="6">Sábado</option>
+                <option value="0">Domingo</option>
+              </select>
+            </div>
+            <div>
+              <label>Horario</label>
+              <input type="time" id="c-time" required>
+            </div>
+          </div>
+          <div class="row2">
+            <div>
+              <label>Profesora/or</label>
+              <input type="text" id="c-teacher">
+            </div>
+            <div>
+              <label>Cupo máximo</label>
+              <input type="number" id="c-capacity" value="10" min="1" required>
+            </div>
+          </div>
+          <button class="btn" type="submit" style="width:100%;">Agregar clase</button>
+        </form>
+        <p class="msg" id="class-msg"></p>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0; font-size:1.05rem;">Clases existentes</h2>
+        <div id="classes-list"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0; font-size:1.05rem;">Generar turnos reservables</h2>
+        <p style="font-size:0.82rem; opacity:0.75;">Crea las fechas concretas (próximos N días) para que las alumnas puedan reservar, a partir de las clases activas de arriba.</p>
+        <label>Días hacia adelante</label>
+        <input type="number" id="gen-days" value="30" min="1">
+        <button class="btn ok" id="generate-btn" style="width:100%;">Generar turnos</button>
+        <p class="msg" id="generate-msg"></p>
+      </div>
+    </div>
+
+    <!-- RESERVAS DEL DIA -->
+    <div id="tab-reservas" class="hidden">
+      <div class="card">
+        <label>Fecha</label>
+        <input type="date" id="booking-date">
+        <div id="bookings-list" style="margin-top:0.9rem;"></div>
+      </div>
+    </div>
+
+    <!-- ALUMNAS Y PACKS -->
+    <div id="tab-alumnas" class="hidden">
+      <div class="card">
+        <label>Buscar alumna (nombre o email)</label>
+        <input type="text" id="student-search" placeholder="Escribí para buscar...">
+        <div id="student-results" style="margin-top:0.7rem;"></div>
+      </div>
+
+      <div class="card hidden" id="student-detail-card">
+        <h2 style="margin-top:0; font-size:1.05rem;" id="student-detail-name"></h2>
+        <div id="student-packs-list"></div>
+        <hr style="border:none; border-top:1px solid var(--gris); margin:0.9rem 0;">
+        <h2 style="font-size:0.95rem;">Agregar pack</h2>
+        <div class="row2">
+          <div>
+            <label>Plan</label>
+            <select id="pack-type">
+              <option value="pack6">Pack x6</option>
+              <option value="libre">Libre</option>
+            </select>
+          </div>
+          <div>
+            <label>Créditos (si es pack6)</label>
+            <input type="number" id="pack-credits" value="6" min="1">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label>Precio pagado</label>
+            <input type="number" id="pack-price" min="0" step="0.01">
+          </div>
+          <div>
+            <label>Válido hasta</label>
+            <input type="date" id="pack-valid-until" required>
+          </div>
+        </div>
+        <button class="btn" id="add-pack-btn" style="width:100%;">Guardar pack</button>
+        <p class="msg" id="pack-msg"></p>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../assets/supabase-config.js"></script>
+<script>
+  const client = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  let currentUser = null;
+  let selectedStudent = null;
+  const DAY_NAMES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+  function show(el){ el.classList.remove('hidden'); }
+  function hide(el){ el.classList.add('hidden'); }
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('li-email').value.trim();
+    const password = document.getElementById('li-password').value;
+    const msg = document.getElementById('login-msg');
+    msg.textContent = '';
+    const { error } = await client.auth.signInWithPassword({ email, password });
+    if (error) { msg.textContent = 'Email o contraseña incorrectos.'; msg.className = 'msg error'; }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', () => client.auth.signOut());
+  document.getElementById('logout-noaccess').addEventListener('click', () => client.auth.signOut());
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      ['clases','reservas','alumnas'].forEach(name => {
+        const el = document.getElementById('tab-' + name);
+        if (name === tab.dataset.tab) show(el); else hide(el);
+      });
+      if (tab.dataset.tab === 'clases') loadClasses();
+      if (tab.dataset.tab === 'reservas') loadBookingsForDate();
+    });
+  });
+
+  async function onLogin(user) {
+    currentUser = user;
+    const { data: profile } = await client.from('profiles').select('*').eq('id', user.id).single();
+    if (!profile || profile.role !== 'admin') {
+      hide(document.getElementById('login-view'));
+      hide(document.getElementById('admin-view'));
+      show(document.getElementById('no-access-view'));
+      return;
+    }
+    hide(document.getElementById('login-view'));
+    hide(document.getElementById('no-access-view'));
+    show(document.getElementById('admin-view'));
+    document.getElementById('admin-name').textContent = profile.full_name || profile.email;
+    document.getElementById('booking-date').value = new Date().toISOString().slice(0,10);
+    loadClasses();
+    loadBookingsForDate();
+  }
+
+  function onLogout() {
+    currentUser = null;
+    hide(document.getElementById('admin-view'));
+    hide(document.getElementById('no-access-view'));
+    show(document.getElementById('login-view'));
+    document.getElementById('login-form').reset();
+  }
+
+  // ---------------- CLASES ----------------
+  document.getElementById('class-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('class-msg');
+    const payload = {
+      name: document.getElementById('c-name').value.trim(),
+      day_of_week: Number(document.getElementById('c-day').value),
+      start_time: document.getElementById('c-time').value,
+      teacher_name: document.getElementById('c-teacher').value.trim(),
+      capacity: Number(document.getElementById('c-capacity').value)
+    };
+    const { error } = await client.from('classes').insert(payload);
+    if (error) { msg.textContent = error.message; msg.className = 'msg error'; return; }
+    msg.textContent = 'Clase agregada.'; msg.className = 'msg ok';
+    document.getElementById('class-form').reset();
+    document.getElementById('c-name').value = 'Hatha Yoga Terapéutico';
+    document.getElementById('c-capacity').value = 10;
+    loadClasses();
+  });
+
+  async function loadClasses() {
+    const list = document.getElementById('classes-list');
+    list.innerHTML = 'Cargando...';
+    const { data, error } = await client.from('classes').select('*').order('day_of_week').order('start_time');
+    if (error) { list.innerHTML = '<p class="msg error">No se pudo cargar.</p>'; return; }
+    if (!data || data.length === 0) { list.innerHTML = '<p class="msg">Todavía no hay clases cargadas.</p>'; return; }
+    list.innerHTML = '';
+    data.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = `
+        <div class="info">
+          <b>${DAY_NAMES[c.day_of_week]} ${c.start_time.slice(0,5)} · ${c.name}</b>
+          <span>${c.teacher_name || 'Sin profesora asignada'} · cupo ${c.capacity}</span>
+        </div>
+        <div class="actions">
+          <span class="badge ${c.active ? '' : 'off'}">${c.active ? 'Activa' : 'Inactiva'}</span>
+          <button class="btn secondary small toggle-btn">${c.active ? 'Desactivar' : 'Activar'}</button>
+        </div>
+      `;
+      row.querySelector('.toggle-btn').addEventListener('click', async () => {
+        await client.from('classes').update({ active: !c.active }).eq('id', c.id);
+        loadClasses();
+      });
+      list.appendChild(row);
+    });
+  }
+
+  document.getElementById('generate-btn').addEventListener('click', async () => {
+    const msg = document.getElementById('generate-msg');
+    const days = Number(document.getElementById('gen-days').value) || 30;
+    msg.textContent = 'Generando...'; msg.className = 'msg';
+    const { data: classes, error } = await client.from('classes').select('*').eq('active', true);
+    if (error) { msg.textContent = error.message; msg.className = 'msg error'; return; }
+    const rows = [];
+    const today = new Date();
+    for (let i = 0; i < days; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const dow = d.getDay();
+      classes.forEach(c => {
+        if (c.day_of_week === dow) {
+          rows.push({ class_id: c.id, session_date: d.toISOString().slice(0,10) });
+        }
+      });
+    }
+    if (rows.length === 0) { msg.textContent = 'No hay clases activas para generar.'; msg.className = 'msg error'; return; }
+    const { error: upsertError } = await client.from('sessions').upsert(rows, { onConflict: 'class_id,session_date', ignoreDuplicates: true });
+    if (upsertError) { msg.textContent = upsertError.message; msg.className = 'msg error'; return; }
+    msg.textContent = `Listo, ${rows.length} turnos generados/actualizados.`; msg.className = 'msg ok';
+  });
+
+  // ---------------- RESERVAS DEL DIA ----------------
+  document.getElementById('booking-date').addEventListener('change', loadBookingsForDate);
+
+  async function loadBookingsForDate() {
+    const list = document.getElementById('bookings-list');
+    const date = document.getElementById('booking-date').value;
+    if (!date) return;
+    list.innerHTML = 'Cargando...';
+    const { data, error } = await client.from('bookings')
+      .select('id, status, profiles(full_name, phone, email), sessions!inner(session_date, classes(name, start_time, teacher_name))')
+      .eq('sessions.session_date', date)
+      .neq('status', 'cancelado');
+    if (error) { list.innerHTML = '<p class="msg error">' + error.message + '</p>'; return; }
+    if (!data || data.length === 0) { list.innerHTML = '<p class="msg">No hay reservas para este día.</p>'; return; }
+
+    data.sort((a,b) => (a.sessions?.classes?.start_time || '').localeCompare(b.sessions?.classes?.start_time || ''));
+    list.innerHTML = '';
+    data.forEach(b => {
+      const c = b.sessions?.classes;
+      const p = b.profiles;
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = `
+        <div class="info">
+          <b>${c?.start_time?.slice(0,5) || ''} · ${p?.full_name || p?.email || 'Alumna'}</b>
+          <span>${c?.name || ''} · ${p?.phone || ''} · estado: ${b.status}</span>
+        </div>
+        <div class="actions">
+          <button class="btn ok small" data-status="asistio">Asistió</button>
+          <button class="btn secondary small" data-status="ausente">Ausente</button>
+        </div>
+      `;
+      row.querySelectorAll('button[data-status]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await client.from('bookings').update({ status: btn.dataset.status }).eq('id', b.id);
+          loadBookingsForDate();
+        });
+      });
+      list.appendChild(row);
+    });
+  }
+
+  // ---------------- ALUMNAS Y PACKS ----------------
+  let searchTimeout;
+  document.getElementById('student-search').addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    const q = e.target.value.trim();
+    if (q.length < 2) { document.getElementById('student-results').innerHTML = ''; return; }
+    searchTimeout = setTimeout(() => searchStudents(q), 300);
+  });
+
+  async function searchStudents(q) {
+    const results = document.getElementById('student-results');
+    const { data, error } = await client.from('profiles')
+      .select('*')
+      .or(`full_name.ilike.%${q}%,email.ilike.%${q}%`)
+      .limit(10);
+    if (error) { results.innerHTML = '<p class="msg error">' + error.message + '</p>'; return; }
+    if (!data || data.length === 0) { results.innerHTML = '<p class="msg">Sin resultados.</p>'; return; }
+    results.innerHTML = '';
+    data.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = `<div class="info"><b>${p.full_name || 'Sin nombre'}</b><span>${p.email || ''} · ${p.phone || ''}</span></div>`;
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', () => selectStudent(p));
+      results.appendChild(row);
+    });
+  }
+
+  function selectStudent(p) {
+    selectedStudent = p;
+    show(document.getElementById('student-detail-card'));
+    document.getElementById('student-detail-name').textContent = p.full_name || p.email;
+    loadStudentPacks();
+  }
+
+  async function loadStudentPacks() {
+    const list = document.getElementById('student-packs-list');
+    list.innerHTML = 'Cargando packs...';
+    const { data, error } = await client.from('packs')
+      .select('*')
+      .eq('student_id', selectedStudent.id)
+      .order('purchased_at', { ascending: false });
+    if (error) { list.innerHTML = '<p class="msg error">' + error.message + '</p>'; return; }
+    if (!data || data.length === 0) { list.innerHTML = '<p class="msg">Sin packs cargados.</p>'; return; }
+    list.innerHTML = '';
+    data.forEach(pk => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = `
+        <div class="info">
+          <b>${pk.plan_type === 'pack6' ? 'Pack x6' : 'Libre'} · vence ${pk.valid_until}</b>
+          <span>${pk.plan_type === 'pack6' ? pk.credits_remaining + ' créditos restantes' : 'Sin límite'} · $${pk.price_paid ?? '-'}</span>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  document.getElementById('add-pack-btn').addEventListener('click', async () => {
+    const msg = document.getElementById('pack-msg');
+    if (!selectedStudent) return;
+    const plan_type = document.getElementById('pack-type').value;
+    const payload = {
+      student_id: selectedStudent.id,
+      plan_type,
+      credits_remaining: plan_type === 'pack6' ? Number(document.getElementById('pack-credits').value) : null,
+      price_paid: Number(document.getElementById('pack-price').value) || null,
+      valid_until: document.getElementById('pack-valid-until').value
+    };
+    if (!payload.valid_until) { msg.textContent = 'Completá la fecha de vencimiento.'; msg.className = 'msg error'; return; }
+    const { error } = await client.from('packs').insert(payload);
+    if (error) { msg.textContent = error.message; msg.className = 'msg error'; return; }
+    msg.textContent = 'Pack guardado.'; msg.className = 'msg ok';
+    loadStudentPacks();
+  });
+
+  // ---------------- Boot ----------------
+  (async function init() {
+    const { data: { session } } = await client.auth.getSession();
+    if (session) onLogin(session.user);
+    client.auth.onAuthStateChange((event, session) => {
+      if (session) onLogin(session.user);
+      else onLogout();
+    });
+  })();
+</script>
+
+</body>
+</html>
